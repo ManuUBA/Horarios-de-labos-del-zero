@@ -48,13 +48,13 @@ jobs:
           echo "=== Archivos generados ==="
           ls -R
 
-      # Subir la imagen generada como artifact (solo si existe)
+      # Subir la imagen generada como artifact (si existe)
       - name: Subir imagen generada
-        if: always()  # se ejecuta aunque fallen pasos anteriores
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: grafico-horarios
-          path: "*.png"
+          path: grafico.png
 
       # Commit y push de resultados (CSVs y notebook out)
       - name: Commit cambios

@@ -5,27 +5,36 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # se ejecuta todos los días a medianoche UTC
   workflow_dispatch:
 
 jobs:
   update_csvs:
     runs-on: ubuntu-latest
     steps:
-      # Clonar el repositorio con todo el historial
+      # Clonar el repositorio
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
-      # Descargar cada pestaña del Google Sheet como CSV
+      # Descargar cada pestaña del Google Sheet
       - name: Descargar pestañas del Google Sheet
         run: |
-          curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
-          curl -L -o Martes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=886860040"
-          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=1217425647"
-          curl -L -o Jueves.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
-          curl -L -o Viernes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
-          curl -L -o Sabado.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
+          set -e  # detener workflow si algún curl falla
+          declare -A sheets=(
+            ["Lunes"]="223702133"
+            ["Martes"]="886860040"
+            ["Miercoles"]="1217425647"
+            ["Jueves"]="386141421"
+            ["Viernes"]="218038362"
+            ["Sabado"]="762036108"
+          )
+
+          for day in "${!sheets[@]}"; do
+            url="https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=${sheets[$day]}"
+            echo "Descargando $day.csv..."
+            curl -fsSL -o "$day.csv" "$url"
+          done
 
       # Configurar Git
       - name: Configurar Git
@@ -33,9 +42,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Commit y push forzado de los CSVs
-      - name: Commit y push forzado
+      # Commit y push solo si hay cambios
+      - name: Commit y push si hay cambios
         run: |
           git add *.csv
-          git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
-          git push --force origin main || echo "No hay cambios para push"
+          if ! git diff --cached --quiet; then
+            git commit -m "Actualizar CSVs desde Google Sheets"
+            git push origin main
+          else
+            echo "No hay cambios en los CSVs"
+          fi

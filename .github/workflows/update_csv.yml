@@ -12,10 +12,8 @@ jobs:
   update_csvs:
     runs-on: ubuntu-latest
     steps:
-      # Clonar el repositorio
+      # Clonar el repositorio y mantener credenciales para push
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
       # Descargar cada pestaña del Google Sheet como CSV
       - name: Descargar pestañas del Google Sheet
@@ -38,4 +36,4 @@ jobs:
         run: |
           git add *.csv
           git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
-          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main
+          git push --force origin main || echo "No hay cambios para push"

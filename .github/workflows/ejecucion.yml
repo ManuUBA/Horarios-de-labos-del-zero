@@ -23,7 +23,7 @@ jobs:
       # Verificar existencia del notebook
       - name: Verificar notebook
         run: |
-          NOTEBOOK="Horarios_de_labos_del_0.ipynb"
+          NOTEBOOK="Horarios de labos del 0.ipynb"
           if [ ! -f "$NOTEBOOK" ]; then
             echo "Error: No se encontró el notebook '$NOTEBOOK'."
             exit 1

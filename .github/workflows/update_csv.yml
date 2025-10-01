@@ -24,7 +24,7 @@ jobs:
           curl -L -o Jueves.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
           curl -L -o Viernes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
           curl -L -o Sabado.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
-          
+
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
@@ -34,12 +34,5 @@ jobs:
         run: |
           git add *.csv
           git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main
-
-      - name: Commit y push si hay cambios
-        run: |
-          git add *.csv
-          git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
           git pull --rebase https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git main
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main
-
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main || echo "No hay cambios para push"

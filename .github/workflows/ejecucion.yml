@@ -45,10 +45,12 @@ jobs:
           NOTEBOOK="Horarios_de_labos_del_0.ipynb"
           OUTPUT_NOTEBOOK="Horarios_de_labos_del_0_out.ipynb"
           papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
-          ls -lh
+          echo "=== Archivos generados ==="
+          ls -R
 
-      # Subir la imagen generada como artifact
+      # Subir la imagen generada como artifact (solo si existe)
       - name: Subir imagen generada
+        if: always()  # se ejecuta aunque fallen pasos anteriores
         uses: actions/upload-artifact@v4
         with:
           name: grafico-horarios

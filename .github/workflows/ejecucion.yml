@@ -13,11 +13,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Instalar dependencias y registrar kernel
-      - name: Instalar Jupyter y paquetes
+      # Instalar paquetes necesarios y registrar kernel
+      - name: Instalar paquetes necesarios
         run: |
           python -m pip install --upgrade pip
-          pip install jupyter nbconvert papermill ipykernel
+          pip install jupyter nbconvert papermill ipykernel matplotlib requests
           python -m ipykernel install --user --name=python3 --display-name "Python 3"
 
       # Verificar existencia del notebook

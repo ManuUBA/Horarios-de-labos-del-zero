@@ -1,7 +1,7 @@
-name: Actualizar CSV desde Google Sheets
+name: Actualizar CSVs desde Google Sheets
 
 permissions:
-  contents: write  # importante para poder hacer push
+  contents: write
 
 on:
   schedule:
@@ -9,15 +9,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  update_csv:
+  update_csvs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
 
-      - name: Descargar CSV
-        run: curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
+      - name: Descargar pestañas del Google Sheet
+        run: |
+          curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=223702133#gid=223702133"
+          curl -L -o Martes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=886860040#gid=886860040"
+          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=1217425647#gid=1217425647"
+          curl -L -o Jueves.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=386141421#gid=386141421"
+          curl -L -o Viernes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=218038362#gid=218038362"
+          curl -L -o Sabado.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/edit?gid=762036108#gid=762036108"
 
       - name: Configurar Git
         run: |
@@ -27,5 +33,5 @@ jobs:
       - name: Commit y push si hay cambios
         run: |
           git add *.csv
-          git diff --cached --quiet || git commit -m "Actualizar CSV desde Google Sheets"
+          git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main

@@ -45,29 +45,24 @@ jobs:
           NOTEBOOK="Horarios_de_labos_del_0.ipynb"
           OUTPUT_NOTEBOOK="Horarios_de_labos_del_0_out.ipynb"
           papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
-          echo "=== Archivos generados ==="
-          ls -R
 
-      # Subir la imagen generada como artifact (si existe)
-      - name: Subir imagen generada
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: grafico-horarios
-          path: grafico.png
-
-      # Commit y push de resultados (CSVs y notebook out)
-      - name: Commit cambios
+      # Commit y push de CSVs y notebook de salida
+      - name: Commit CSVs y notebook
         run: |
-          git add *.csv "Horarios_de_labos_del_0_out.ipynb" || true
+          git add *.csv "Horarios_de_labos_del_0_out.ipynb"
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar CSVs y notebook ejecutado"
           else
-            echo "No hay cambios que hacer commit"
+            echo "No hay cambios en CSVs ni notebook"
           fi
 
-      - name: Push cambios
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+      # Commit y push de la imagen generada (reemplazo)
+      - name: Actualizar imagen en el repo
+        run: |
+          git add grafico.png
+          if ! git diff --cached --quiet; then
+            git commit -m "Actualizar grafico.png"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
+          else
+            echo "No hay cambios en grafico.png"
+          fi

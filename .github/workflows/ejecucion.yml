@@ -34,7 +34,7 @@ jobs:
       # Ejecutar el notebook
       - name: Ejecutar notebook
         run: |
-          papermill Horarios_de_labos_del_0.ipynb Horarios_de_labos_del_0_out.ipynb
+          papermill Horarios de labos del 0.ipynb Horarios_de_labos_del_0_out.ipynb
 
       # Commit y push resultados si hay cambios
       - name: Commit y push resultados

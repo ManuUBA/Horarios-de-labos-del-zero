@@ -14,6 +14,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Configurar Git para commits automáticos
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       # Descargar cada pestaña del Google Sheet como CSV
       - name: Descargar pestañas del Google Sheet
         run: |

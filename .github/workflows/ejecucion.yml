@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *'  # cada hora en punto UTC
   workflow_dispatch:
 
+permissions:
+  contents: write  # Permiso para pushear con GITHUB_TOKEN
+
 jobs:
   update_and_run:
     runs-on: ubuntu-latest
@@ -23,12 +26,12 @@ jobs:
       # Descargar CSVs
       - name: Descargar pestañas del Google Sheet
         run: |
-          curl -L -o Lunes.csv     "https://docs.google.com/spreadsheets/d/...&gid=223702133"
-          curl -L -o Martes.csv    "https://docs.google.com/spreadsheets/d/...&gid=886860040"
-          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/...&gid=1217425647"
-          curl -L -o Jueves.csv    "https://docs.google.com/spreadsheets/d/...&gid=386141421"
-          curl -L -o Viernes.csv   "https://docs.google.com/spreadsheets/d/...&gid=218038362"
-          curl -L -o Sabado.csv    "https://docs.google.com/spreadsheets/d/...&gid=762036108"
+          curl -L -o Lunes.csv     "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
+          curl -L -o Martes.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=886860040"
+          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=1217425647"
+          curl -L -o Jueves.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
+          curl -L -o Viernes.csv   "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
+          curl -L -o Sabado.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
 
       # Instalar dependencias
       - name: Instalar dependencias
@@ -45,7 +48,7 @@ jobs:
           ls -lh
 
       # Subir la imagen generada como artifact
-      - name: Upload imagen generada
+      - name: Subir imagen generada
         uses: actions/upload-artifact@v4
         with:
           name: grafico-horarios
@@ -54,7 +57,7 @@ jobs:
       # Commit y push de resultados (CSVs y notebook out)
       - name: Commit cambios
         run: |
-          git add *.csv "Horarios_de_labos_del_0_out.ipynb"
+          git add *.csv "Horarios_de_labos_del_0_out.ipynb" || true
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar CSVs y notebook ejecutado"
           else

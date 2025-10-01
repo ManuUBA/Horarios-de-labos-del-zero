@@ -19,8 +19,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit y Push si hay cambios
+      - name: Commit y push si hay cambios
         run: |
-          git add data.csv
-          git diff --cached --quiet || git commit -m "Actualizar CSV desde Google Sheets"
-          git push
+          git add *.csv
+          git diff --cached --quiet || git commit -m "Actualizar CSV desde Google Sheets"          
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main
+

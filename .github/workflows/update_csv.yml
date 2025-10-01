@@ -5,7 +5,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # se ejecuta todos los días a medianoche UTC
+    - cron: '0 0 * * *'  # Todos los días a medianoche UTC
   workflow_dispatch:
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
       # Descargar cada pestaña del Google Sheet
       - name: Descargar pestañas del Google Sheet
         run: |
-          set -e  # detener workflow si algún curl falla
+          set -e  # Detener workflow si falla algún curl
           declare -A sheets=(
             ["Lunes"]="223702133"
             ["Martes"]="886860040"
@@ -45,9 +45,10 @@ jobs:
       # Commit y push solo si hay cambios
       - name: Commit y push si hay cambios
         run: |
-          git add *.csv
+          git add -A
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar CSVs desde Google Sheets"
+            git pull --rebase origin main
             git push origin main
           else
             echo "No hay cambios en los CSVs"

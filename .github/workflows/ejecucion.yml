@@ -9,45 +9,49 @@ jobs:
   update_and_run:
     runs-on: ubuntu-latest
     steps:
-      # Clonar el repositorio con todo el historial
+      # Clonar el repo
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # Configurar Git para commits automáticos
+      # Configurar Git
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Descargar cada pestaña del Google Sheet como CSV
+      # Descargar CSVs
       - name: Descargar pestañas del Google Sheet
         run: |
-          curl -L -o Lunes.csv     "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
-          curl -L -o Martes.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=886860040"
-          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=1217425647"
-          curl -L -o Jueves.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
-          curl -L -o Viernes.csv   "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
-          curl -L -o Sabado.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
+          curl -L -o Lunes.csv     "https://docs.google.com/spreadsheets/d/...&gid=223702133"
+          curl -L -o Martes.csv    "https://docs.google.com/spreadsheets/d/...&gid=886860040"
+          curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/...&gid=1217425647"
+          curl -L -o Jueves.csv    "https://docs.google.com/spreadsheets/d/...&gid=386141421"
+          curl -L -o Viernes.csv   "https://docs.google.com/spreadsheets/d/...&gid=218038362"
+          curl -L -o Sabado.csv    "https://docs.google.com/spreadsheets/d/...&gid=762036108"
 
-      # Instalar dependencias necesarias
+      # Instalar dependencias
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install jupyter papermill matplotlib requests
 
       # Ejecutar notebook
-      - name: Ejecutar notebook
+      - name: Ejecutar notebook con papermill
         run: |
           NOTEBOOK="Horarios_de_labos_del_0.ipynb"
           OUTPUT_NOTEBOOK="Horarios_de_labos_del_0_out.ipynb"
-          if [ ! -f "$NOTEBOOK" ]; then
-            echo "Error: No se encontró el notebook '$NOTEBOOK'."
-            exit 1
-          fi
           papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
+          ls -lh
 
-      # Commit y push de cambios
+      # Subir la imagen generada como artifact
+      - name: Upload imagen generada
+        uses: actions/upload-artifact@v4
+        with:
+          name: grafico-horarios
+          path: "*.png"
+
+      # Commit y push de resultados (CSVs y notebook out)
       - name: Commit cambios
         run: |
           git add *.csv "Horarios_de_labos_del_0_out.ipynb"

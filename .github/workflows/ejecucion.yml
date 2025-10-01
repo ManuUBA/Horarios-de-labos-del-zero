@@ -2,7 +2,7 @@ name: Actualizar CSVs y ejecutar notebook
 
 on:
   schedule:
-    - cron: '0 * * * *'  # cada hora en punto UTC
+    - cron: '* * * * *'  # cada hora en punto UTC
   workflow_dispatch:
 
 jobs:

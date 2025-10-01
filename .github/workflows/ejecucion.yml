@@ -2,7 +2,7 @@ name: Actualizar CSVs y ejecutar notebook
 
 on:
   schedule:
-    - cron: '* * * * *'  # cada hora en punto UTC
+    - cron: '0 * * * *'  # cada hora en punto UTC
   workflow_dispatch:
 
 jobs:
@@ -23,24 +23,23 @@ jobs:
       # Descargar cada pestaña del Google Sheet como CSV
       - name: Descargar pestañas del Google Sheet
         run: |
-          curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
-          curl -L -o Martes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=886860040"
+          curl -L -o Lunes.csv     "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
+          curl -L -o Martes.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=886860040"
           curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=1217425647"
-          curl -L -o Jueves.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
-          curl -L -o Viernes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
-          curl -L -o Sabado.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
+          curl -L -o Jueves.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=386141421"
+          curl -L -o Viernes.csv   "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
+          curl -L -o Sabado.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
 
-      # Instalar paquetes necesarios y registrar kernel
-      - name: Instalar paquetes y kernel
+      # Instalar dependencias necesarias
+      - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install jupyter nbconvert papermill ipykernel matplotlib requests
-          python -m ipykernel install --user --name=python3 --display-name "Python 3"
+          pip install jupyter papermill matplotlib requests
 
       # Ejecutar notebook
       - name: Ejecutar notebook
         run: |
-          NOTEBOOK="Horarios de labos del 0.ipynb"
+          NOTEBOOK="Horarios_de_labos_del_0.ipynb"
           OUTPUT_NOTEBOOK="Horarios_de_labos_del_0_out.ipynb"
           if [ ! -f "$NOTEBOOK" ]; then
             echo "Error: No se encontró el notebook '$NOTEBOOK'."
@@ -48,14 +47,18 @@ jobs:
           fi
           papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
 
-      # Commit y push de cambios usando GITHUB_TOKEN
-      - name: Commit y push resultados
+      # Commit y push de cambios
+      - name: Commit cambios
         run: |
           git add *.csv "Horarios_de_labos_del_0_out.ipynb"
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar CSVs y notebook ejecutado"
-            git pull --rebase origin main
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
           else
-            echo "No hay cambios que hacer push"
+            echo "No hay cambios que hacer commit"
           fi
+
+      - name: Push cambios
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

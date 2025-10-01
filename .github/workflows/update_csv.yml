@@ -1,8 +1,11 @@
 name: Actualizar CSV desde Google Sheets
 
+permissions:
+  contents: write  # permite push
+
 on:
   schedule:
-    - cron: '0 0 * * *'  # cada día a medianoche
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
@@ -11,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          persist-credentials: false  # importante para usar GITHUB_TOKEN
+          persist-credentials: false
 
       - name: Descargar CSV desde Google Sheets
         run: curl -L -o data.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"

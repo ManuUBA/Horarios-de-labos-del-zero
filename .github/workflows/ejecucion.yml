@@ -2,23 +2,23 @@ name: Ejecutar Colab/Notebook
 
 on:
   schedule:
-    - cron: '0 * * * *'  # cada hora en punto UTC
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
   run_notebook:
     runs-on: ubuntu-latest
     steps:
-      # Clonar el repositorio con todo el historial
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # Instalar dependencias
-      - name: Instalar Python y paquetes
+      # Instalar dependencias y registrar kernel
+      - name: Instalar Jupyter y paquetes
         run: |
           python -m pip install --upgrade pip
-          pip install nbconvert papermill
+          pip install jupyter nbconvert papermill ipykernel
+          python -m ipykernel install --user --name=python3 --display-name "Python 3"
 
       # Verificar existencia del notebook
       - name: Verificar notebook
@@ -27,11 +27,9 @@ jobs:
           if [ ! -f "$NOTEBOOK" ]; then
             echo "Error: No se encontró el notebook '$NOTEBOOK'."
             exit 1
-          else
-            echo "Notebook '$NOTEBOOK' encontrado."
           fi
 
-      # Ejecutar el notebook
+      # Ejecutar notebook
       - name: Ejecutar notebook
         run: |
           papermill "Horarios de labos del 0.ipynb" "Horarios_de_labos_del_0_out.ipynb"

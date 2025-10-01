@@ -2,14 +2,16 @@ name: Ejecutar Colab/Notebook
 
 on:
   schedule:
-    - cron: '0 * * * *'  # cada hora en punto (00:00, 01:00, 02:00… UTC)
-  workflow_dispatch:     # también permite correr manualmente
+    - cron: '0 * * * *'  # cada hora en punto UTC
+  workflow_dispatch:
 
 jobs:
   run_notebook:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       # Instalar dependencias
       - name: Instalar Python y paquetes
@@ -20,14 +22,15 @@ jobs:
       # Ejecutar el notebook
       - name: Ejecutar notebook
         run: |
-          papermill tu_notebook.ipynb tu_notebook_out.ipynb
+          papermill Horarios_de_labos_del_0.ipynb Horarios_de_labos_del_0_out.ipynb
 
-      # (Opcional) Commit y push si el notebook genera resultados
+      # Commit y push resultados si hay cambios
       - name: Commit y push resultados
         run: |
-          git add tu_notebook_out.ipynb
+          git add Horarios_de_labos_del_0_out.ipynb
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar notebook ejecutado"
+            git pull --rebase origin main
             git push origin main
           else
             echo "No hay cambios"

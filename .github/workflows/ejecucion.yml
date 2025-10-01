@@ -48,14 +48,14 @@ jobs:
           fi
           papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
 
-      # Commit y push de cambios
+      # Commit y push de cambios usando GITHUB_TOKEN
       - name: Commit y push resultados
         run: |
           git add *.csv "Horarios_de_labos_del_0_out.ipynb"
           if ! git diff --cached --quiet; then
             git commit -m "Actualizar CSVs y notebook ejecutado"
             git pull --rebase origin main
-            git push origin main
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
           else
             echo "No hay cambios que hacer push"
           fi

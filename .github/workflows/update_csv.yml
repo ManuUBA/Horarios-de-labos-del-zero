@@ -18,7 +18,6 @@ jobs:
 
       - name: Descargar pestañas del Google Sheet
         run: |
-        https://docs.google.com/spreadsheets/d/<SHEET_ID>/export?format=csv&gid=<GID1>
           curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/export?format=csv&gid==223702133"
           curl -L -o Martes.csv "https://docs.google.com/spreadsheets/d/export?format=csv&gid=886860040"
           curl -L -o Miercoles.csv "https://docs.google.com/spreadsheets/d/export?format=csv&gid=1217425647"

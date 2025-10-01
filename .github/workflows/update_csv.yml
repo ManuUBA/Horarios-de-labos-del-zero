@@ -5,17 +5,19 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # cada día a medianoche
   workflow_dispatch:
 
 jobs:
   update_csvs:
     runs-on: ubuntu-latest
     steps:
+      # Clonar el repositorio
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
 
+      # Descargar cada pestaña del Google Sheet como CSV
       - name: Descargar pestañas del Google Sheet
         run: |
           curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
@@ -25,14 +27,15 @@ jobs:
           curl -L -o Viernes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
           curl -L -o Sabado.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
 
+      # Configurar Git
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit y push si hay cambios
+      # Commit y push forzado de los CSVs
+      - name: Commit y push forzado
         run: |
           git add *.csv
           git diff --cached --quiet || git commit -m "Actualizar CSVs desde Google Sheets"
-          git pull --rebase https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git main
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main || echo "No hay cambios para push"
+          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManuUBA/Horarios-zero.git HEAD:main

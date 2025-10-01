@@ -44,7 +44,7 @@ for idx, dia in enumerate(dias):
     horarios_labo = obtener_horarios(f"{base_url}{dia}.csv")
 
     ax.set_xlim(8, 23)
-    ax.set_ylim(0, len(labos))ipynb
+    ax.set_ylim(0, len(labos))
     ax.set_yticks([i + 0.5 for i in range(len(labos))])
     ax.set_yticklabels([str(l) for l in labos])  # ahora se muestran todos los labos
     ax.set_xlabel("Hora")

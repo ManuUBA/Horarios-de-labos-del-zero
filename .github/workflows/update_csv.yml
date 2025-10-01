@@ -1,7 +1,7 @@
 name: Actualizar CSV desde Google Sheets
 
 permissions:
-  contents: write  # permite push
+  contents: write  # importante para poder hacer push
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Descargar CSV desde Google Sheets
+      - name: Descargar CSV
         run: curl -L -o data.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
 
       - name: Configurar Git

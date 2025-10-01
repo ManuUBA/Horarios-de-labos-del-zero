@@ -1,4 +1,4 @@
-name: Actualizar CSVs y ejecutar notebook
+name: Actualizar CSVs y ejecutar script Python
 
 on:
   schedule:
@@ -37,23 +37,23 @@ jobs:
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
-          pip install jupyter papermill matplotlib requests
+          pip install matplotlib requests
 
-      # Ejecutar notebook
-      - name: Ejecutar notebook con papermill
+      # Ejecutar script Python
+      - name: Ejecutar script
         run: |
-          NOTEBOOK="Horarios_de_labos_del_0.ipynb"
-          OUTPUT_NOTEBOOK="Horarios_de_labos_del_0_out.ipynb"
-          papermill "$NOTEBOOK" "$OUTPUT_NOTEBOOK"
+          python Horarios_de_labos_del_0.py
+          echo "=== Archivos generados ==="
+          ls -R
 
-      # Commit y push de CSVs y notebook de salida
-      - name: Commit CSVs y notebook
+      # Commit y push de CSVs
+      - name: Commit CSVs
         run: |
-          git add *.csv "Horarios_de_labos_del_0_out.ipynb"
+          git add *.csv
           if ! git diff --cached --quiet; then
-            git commit -m "Actualizar CSVs y notebook ejecutado"
+            git commit -m "Actualizar CSVs"
           else
-            echo "No hay cambios en CSVs ni notebook"
+            echo "No hay cambios en CSVs"
           fi
 
       # Commit y push de la imagen generada (reemplazo)

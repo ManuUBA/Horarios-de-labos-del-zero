@@ -17,7 +17,7 @@ jobs:
           persist-credentials: false
 
       - name: Descargar CSV
-        run: curl -L -o data.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
+        run: curl -L -o Lunes.csv "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=223702133"
 
       - name: Configurar Git
         run: |

@@ -28,3 +28,8 @@ pip install -r requirements.txt
 ```bash
 python scripts/graficador.py
 ```
+
+## Vista previa de la grilla de laboratorios
+
+![Grilla de ocupación de laboratorios](figures/grafico.png)
+

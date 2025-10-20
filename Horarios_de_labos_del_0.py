@@ -21,18 +21,50 @@ def obtener_horarios(url_csv):
     respuesta = requests.get(url_csv)
     archivo_csv = StringIO(respuesta.text)
     filas = list(csv.reader(archivo_csv, delimiter=','))
-    header = [h.strip() for h in filas[1]]
-    datos = filas[1:]
-    c_aula   = header.index("Aula")
-    c_desde  = header.index("Inicio")
-    c_hasta  = header.index("Fin")
-    c_pab    = header.index("Pab.")
-    filas_labo = [f for f in datos if f[c_pab] == "0" and int(f[c_aula]) in labos]
+
+    # Buscar la primera fila que contenga la palabra "Aula"
+    fila_header = None
+    for i, fila in enumerate(filas):
+        fila_str = [f.strip().lower() for f in fila]
+        if any("aula" in celda for celda in fila_str):
+            fila_header = i
+            break
+
+    if fila_header is None:
+        raise ValueError(f"No se encontró encabezado válido en {url_csv}")
+
+    header = [h.strip() for h in filas[fila_header]]
+    datos = filas[fila_header + 1:]
+
+    # Convertir nombres a minúscula para búsqueda flexible
+    header_lower = [h.lower() for h in header]
+
+    def col(nombre):
+        for i, h in enumerate(header_lower):
+            if nombre.lower() in h:
+                return i
+        raise ValueError(f"No se encontró la columna '{nombre}' en {header}")
+
+    c_aula   = col("aula")
+    c_desde  = col("inicio")
+    c_hasta  = col("fin")
+    c_pab    = col("pab")
+
+    filas_labo = []
+    for f in datos:
+        if len(f) <= max(c_aula, c_desde, c_hasta, c_pab):
+            continue
+        try:
+            if f[c_pab].strip() == "0" and int(f[c_aula]) in labos:
+                filas_labo.append(f)
+        except ValueError:
+            continue
 
     horarios_labo = []
     for aula in labos:
         tandas = [[f[c_desde], f[c_hasta]] for f in filas_labo if int(f[c_aula]) == aula]
         horarios_labo.append(tandas)
+        
     return horarios_labo
 
 # Crear figura con 6 subplots (2 columnas x 3 filas)

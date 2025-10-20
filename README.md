@@ -16,3 +16,12 @@ Este repositorio contiene los horarios de los laboratorios de la Facultad de Cie
 ```bash
 git clone https://github.com/ManuUBA/Horarios-de-labos-del-zero.git
 cd Horarios-de-labos-del-zero
+
+2. Instalar dependencias:
+
+```bash
+pip install -r requirements.txt
+
+3. Ejecutar el script:
+```bash
+python scripts/graficador.py

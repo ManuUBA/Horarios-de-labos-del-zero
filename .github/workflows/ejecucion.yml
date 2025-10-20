@@ -42,7 +42,7 @@ jobs:
       # Ejecutar script Python
       - name: Ejecutar script
         run: |
-          python Horarios_de_labos_del_0.py
+          python graficador.py
           echo "=== Archivos generados ==="
           ls -R
 

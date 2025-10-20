@@ -6,7 +6,7 @@ from io import StringIO
 
 dias = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"]
 base_url = "https://raw.githubusercontent.com/ManuUBA/Horarios-zero/main/"
-labos = list(range(1103, 1111))
+labos = list(range(1103, 1113))
 
 def hora_a_decimal(hora):
     h, m = map(int, hora.split(':'))

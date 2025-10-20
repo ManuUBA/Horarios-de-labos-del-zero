@@ -12,18 +12,18 @@ jobs:
   update_and_run:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Clonar el repo
+      #Clonar el repo
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # 2️⃣ Configurar Git
+      #Configurar Git
       - name: Configurar Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 3️⃣ Descargar CSVs a carpeta data/
+      #Descargar CSVs a carpeta data/
       - name: Descargar pestañas del Google Sheet
         run: |
           mkdir -p data
@@ -34,13 +34,13 @@ jobs:
           curl -L -o data/Viernes.csv    "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=218038362"
           curl -L -o data/Sabado.csv     "https://docs.google.com/spreadsheets/d/1pjtykzqGhaTkVfTNK7RsHHuu_u67hiA3jEsn0uMPLFY/export?format=csv&gid=762036108"
 
-      # 4️⃣ Instalar dependencias
+      #Instalar dependencias
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install matplotlib requests
 
-      # 5️⃣ Ejecutar script Python
+      #Ejecutar script Python
       - name: Ejecutar script
         run: |
           mkdir -p figures
@@ -48,7 +48,7 @@ jobs:
           echo "=== Archivos generados ==="
           ls -R
 
-      # 6️⃣ Commit y push de CSVs e imagen
+      #Commit y push de CSVs e imagen
       - name: Commit y push cambios
         run: |
           git add data/*.csv figures/grafico.png

@@ -52,9 +52,11 @@ jobs:
       # 6️⃣ Commit y push de CSVs e imagen
       - name: Commit y push cambios
         run: |
-          git add data/*.csv figures/grafico.png
-          if ! git diff --cached --quiet; then
-            git commit -m "Actualizar CSVs y grafico.png"
+          git add data/*.csv figures/*.png
+          CHANGES=$(git diff --cached --name-only)
+          if [ -n "$CHANGES" ]; then
+            git commit -m "Actualizar CSVs y figuras"
             git push
           else
             echo "No hay cambios"
+          fi

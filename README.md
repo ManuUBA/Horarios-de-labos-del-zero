@@ -7,7 +7,9 @@ Este repositorio contiene los horarios de los laboratorios de la Facultad de Cie
 - `data/` → Archivos CSV con los horarios por día (Lunes, Martes, …, Sábado).  
 - `scripts/graficador.py` → Script en Python que procesa los CSV y genera la grilla.  
 - `figures/` → Carpeta donde se guardan las imágenes generadas.  
-- `requirements.txt` → Librerías necesarias para ejecutar el script.  
+- `requirements.txt` → Librerías necesarias para ejecutar el script.
+- `README.md` → Documentación del repositorio
+- `License` → MIT License
 
 ## Uso
 
